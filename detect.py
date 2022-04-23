@@ -101,7 +101,7 @@ def run(
         bs = len(dataset)  # batch_size
     else:
         dataset = LoadImages(source, img_size=imgsz, stride=stride, auto=pt)
-        bs = 1  # batch_size
+        bs = 10  # batch_size
     vid_path, vid_writer = [None] * bs, [None] * bs
 
     # Run inference
