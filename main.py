@@ -34,8 +34,7 @@ def algorithm(raw_link_vid , raw_link_coord ):
     # waitTillProgramIsDone('python3 detect.py --weights best.pt --source input')
     
     # Delete input files
-    main_util.deleteFileIfItExists(temp_local_save_path + "/video.mp4")
-    main_util.deleteFileIfItExists(temp_local_save_path + "/coord.csv")
+    main_gdownloader.deleteAllFilesInFolder(temp_local_save_path)
 
 
 if __name__ == "__main__":

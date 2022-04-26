@@ -23,7 +23,6 @@ def strip_link_from_raw_url(raw_link):
 
 def downloadGoogleDriveFiles(video_link, csv_link, save_path):
 
-
     try:
         
         url_video = strip_link_from_raw_url(video_link)
@@ -37,4 +36,13 @@ def downloadGoogleDriveFiles(video_link, csv_link, save_path):
     except ValueError:
         logging.error('Unable to download video and csv.')
         sys.exit()
-        
+
+
+def deleteAllFilesInFolder(folder_path):
+    for file in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            logging.error(e)
