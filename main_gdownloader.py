@@ -38,11 +38,3 @@ def downloadGoogleDriveFiles(video_link, csv_link, save_path):
         sys.exit()
 
 
-def deleteAllFilesInFolder(folder_path):
-    for file in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, file)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            logging.error(e)

@@ -29,6 +29,10 @@ import os
 import sys
 from pathlib import Path
 
+import pandas as pd
+import numpy as np
+import logging
+
 import torch
 import torch.backends.cudnn as cudnn
 
@@ -44,6 +48,42 @@ from utils.general import (LOGGER, check_file, check_img_size, check_imshow, che
                            increment_path, non_max_suppression, print_args, scale_coords, strip_optimizer, xyxy2xywh)
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, time_sync
+
+
+coordinates_array = []
+pothole_array_count = []
+
+df = pd.read_csv("model_input/coord.csv")
+
+def add_pointers(final_df):
+    try:
+
+        final_df.columns = [c.replace(' ', '') for c in final_df.columns]
+        final_df['date_time_analyzed'] = pd.to_datetime('now')
+        final_df['object_name'] = "Pothole"
+        final_df['pothole_count'] = pothole_array_count
+        
+        
+    except ValueError:
+        logging.error(ValueError)
+    finally:
+        return final_df
+
+
+def save_coordinates_to_csv():
+    try:
+        # Create the data frame using the list of coordinates and add the other columns
+        final_df = pd.DataFrame(coordinates_array)
+        final_df = add_pointers(final_df)
+
+        # Save the data frame to a CSV file
+        path = Path("model_output/output.csv")
+        final_df.replace(r'\s+', np.nan, regex=True)
+        final_df.to_csv(path, index=False)
+
+        logging.info(f'Data saved to {path}')
+    except ValueError:
+        logging.error(ValueError)
 
 
 @torch.no_grad()
@@ -133,6 +173,8 @@ def run(
         # Process predictions
         for i, det in enumerate(pred):  # per image
             seen += 1
+            
+            
             if webcam:  # batch_size >= 1
                 p, im0, frame = path[i], im0s[i].copy(), dataset.count
                 s += f'{i}: '
@@ -152,8 +194,12 @@ def run(
 
                 # Print results
                 for c in det[:, -1].unique():
-                    n = (det[:, -1] == c).sum()  # detections per class
+                    n = (det[:, -1] == c).sum()  # detections per class   HOW MANY DETECTIONS
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
+
+                    instance = df.iloc[(seen-1)]
+                    coordinates_array.append(instance)  # Get the coordinates from the dataframe
+                    pothole_array_count.append(n)  # Get the number of potholes from the dataframe
 
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
@@ -207,6 +253,8 @@ def run(
     if update:
         strip_optimizer(weights)  # update model (to fix SourceChangeWarning)
 
+    save_coordinates_to_csv()
+
 
 def parse_opt():
     parser = argparse.ArgumentParser()
@@ -250,3 +298,7 @@ def main(opt):
 if __name__ == "__main__":
     opt = parse_opt()
     main(opt)
+
+
+    
+
