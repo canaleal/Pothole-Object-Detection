@@ -4,6 +4,7 @@ import logging
 import main_util
 import main_gdownloader
 import main_firebase
+import main_video
 import subprocess
 import streamlit as st
 
@@ -26,38 +27,41 @@ def algorithm(user_id, raw_link_vid, raw_link_coord):
         sys.exit()
 
     # Local Save path
-    temp_local_save_path = 'model_input'
-    temp_local_output_path = 'model_output'
-    temp_local_runs_path = 'runs/detect'
+    input_path = 'model_input'
+    video_path = 'model_input/video'
+    coord_path = 'model_input/coord'
+    frame_path = 'model_input/frame'
+
+    output_path = 'model_output'
+    runs_path = 'runs/detect'
 
     # check if folder exists and create if not
-    main_util.checkIfFolderExistsAndCreateIfNot(temp_local_save_path)
-    main_util.checkIfFolderExistsAndCreateIfNot(temp_local_output_path)
-    
-    
-     # Delete any pre-existing input files
-    main_util.deleteAllFilesInFolder(temp_local_save_path)
+    main_util.checkIfFolderExistsAndCreateIfNot(input_path)
+    main_util.checkIfFolderExistsAndCreateIfNot(video_path)
+    main_util.checkIfFolderExistsAndCreateIfNot(coord_path)
+    main_util.checkIfFolderExistsAndCreateIfNot(frame_path)
 
-    # Delete any pre-existing input files
-    main_util.deleteAllFilesInFolder(temp_local_output_path)
-    
+    main_util.checkIfFolderExistsAndCreateIfNot(output_path)
+    main_util.checkIfFolderExistsAndCreateIfNot(runs_path)
 
     # Load Google Drive Files and save them locally
-    main_gdownloader.downloadGoogleDriveFiles(raw_link_vid, raw_link_coord, temp_local_save_path)
+    main_gdownloader.downloadGoogleDriveFiles(raw_link_vid, raw_link_coord, video_path, coord_path)
 
-    callSubProcess('python detect.py --weights best.pt --source model_input/video.mp4')
+    main_video.convertVideoToFrames(video_path, frame_path)
+
+    callSubProcess('python detect.py --weights best.pt --source model_input/frame')
 
     # Save to firebase
-    main_firebase.save_to_firebase(user_id, temp_local_output_path)
+    main_firebase.save_to_firebase(user_id, output_path)
 
     # Delete input files
-    main_util.deleteAllFilesInFolder(temp_local_save_path)
+    main_util.deleteAllFilesInFolder(video_path)
+    main_util.deleteAllFilesInFolder(coord_path)
+    main_util.deleteAllFilesInFolder(frame_path)
 
     # Delete output files
-    main_util.deleteAllFilesInFolder(temp_local_output_path)
-
-    # Delete runs files
-    main_util.deleteAllFoldersInFolder(temp_local_runs_path)
+    main_util.deleteAllFilesInFolder(output_path)
+    main_util.deleteAllFoldersInFolder(runs_path)
 
 
 if __name__ == "__main__":

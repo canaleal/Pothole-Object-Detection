@@ -21,15 +21,15 @@ def strip_link_from_raw_url(raw_link):
     return url
 
 
-def downloadGoogleDriveFiles(video_link, csv_link, save_path):
+def downloadGoogleDriveFiles(video_link, csv_link, video_path, coord_path):
 
     try:
         
         url_video = strip_link_from_raw_url(video_link)
-        output_video = f'{save_path}/video.mp4'
+        output_video = f'{video_path}/video.mp4'
 
         url_coord = strip_link_from_raw_url(csv_link)
-        output_coord = f'{save_path}/coord.csv'
+        output_coord = f'{coord_path}/coord.csv'
         
         download_google_file(url_video, output_video)
         download_google_file(url_coord, output_coord)
