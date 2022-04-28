@@ -12,6 +12,7 @@ import streamlit as st
 def callSubProcess(command):
     subprocess.call(command, shell=True)
 
+
 def waitTillProgramIsDone(command):
     subprocess.call(command, shell=True)
     while True:
@@ -45,9 +46,10 @@ def algorithm(user_id, raw_link_vid, raw_link_coord):
     main_util.checkIfFolderExistsAndCreateIfNot(runs_path)
 
     # Load Google Drive Files and save them locally
-    main_gdownloader.downloadGoogleDriveFiles(raw_link_vid, raw_link_coord, video_path, coord_path)
+    main_gdownloader.download_google_file(raw_link_vid, video_path + '/video.mp4')
+    main_gdownloader.download_google_file(raw_link_coord, coord_path + '/coord.csv')
 
-    main_video.convertVideoToFrames(video_path, frame_path)
+    main_video.convert_video_to_frames(video_path + '/video.mp4', frame_path)
 
     callSubProcess('python detect.py --weights best.pt --source model_input/frame')
 

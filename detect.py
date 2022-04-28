@@ -54,6 +54,7 @@ coordinates_array = []
 pothole_array_count = []
 df = pd.read_csv("model_input/coord/coord.csv")
 
+
 def add_pointers(final_df):
     try:
 
@@ -61,8 +62,7 @@ def add_pointers(final_df):
         final_df['date_time_analyzed'] = pd.to_datetime('now')
         final_df['object_name'] = "Pothole"
         final_df['pothole_count'] = pothole_array_count
-        
-        
+
     except ValueError:
         logging.error(ValueError)
     finally:
@@ -172,8 +172,7 @@ def run(
         # Process predictions
         for i, det in enumerate(pred):  # per image
             seen += 1
-            
-            
+
             if webcam:  # batch_size >= 1
                 p, im0, frame = path[i], im0s[i].copy(), dataset.count
                 s += f'{i}: '
@@ -196,7 +195,7 @@ def run(
                     n = (det[:, -1] == c).sum()  # detections per class   HOW MANY DETECTIONS
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
-                    instance = df.iloc[(seen-1)]
+                    instance = df.iloc[(seen - 1)]
                     coordinates_array.append(instance)  # Get the coordinates from the dataframe
                     result = f"{n}"
                     pothole_array_count.append(result)  # Get the number of potholes from the dataframe
@@ -298,7 +297,3 @@ def main(opt):
 if __name__ == "__main__":
     opt = parse_opt()
     main(opt)
-
-
-    
-

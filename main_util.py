@@ -20,7 +20,8 @@ def deleteAllFilesInFolder(folder_path):
                 os.unlink(file_path)
         except Exception as e:
             logging.error(e)
-            
+
+
 def deleteAllFoldersInFolder(folder_path):
     for file in os.listdir(folder_path):
         file_path = os.path.join(folder_path, file)
