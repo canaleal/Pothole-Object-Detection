@@ -38,5 +38,5 @@ thop~=0.0.31.post2005241907
 
 Flask~=2.0.2
 tensorflow~=2.5.0
-gdown~=4.2.0
+gdown~=4.4.0
 firebase_admin~=5.2.0
