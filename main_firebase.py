@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import uuid
 import pandas as pd
@@ -23,7 +24,7 @@ def load_firebase(credentials_file):
 
 def set_firebase_collection(db, user_id):
     try:
-        collection_name = str(uuid.uuid4()) + '-potholes'
+        collection_name = 'potholes'
         document_reference = db.collection('users').document(user_id).collection(collection_name)
         return document_reference
 
@@ -38,9 +39,23 @@ def load_data_from_csv(csv_file):
     return tmp
 
 
+def convert_data_to_geojson(data):
+    geojson = { "type": "FeatureCollection", "date_time_analyzed": datetime.now().strftime('%Y-%m-%d %H:%M:%S') ,"features": [] }
+    for point in data :
+        temp_point = point
+        coordinate = [float(temp_point['long']), float(temp_point['lat'])]
+        temp_point.pop('long')
+        temp_point.pop('lat')
+        feature = { "type": "Feature", "geometry": { "type": "Point", "coordinates": coordinate }, "properties": temp_point }
+        geojson['features'].append(feature)
+        
+    return geojson
+    
+
 def save_data_to_firebase(document_reference, data):
     try:
-        list(map(lambda x: document_reference.add(x), data))
+        geojson = convert_data_to_geojson(data)
+        document_reference.add(geojson)
         return True
     except ValueError as e:
         logging.error(e)

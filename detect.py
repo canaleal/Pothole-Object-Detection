@@ -50,19 +50,37 @@ from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, time_sync
 import re
 
+frame_id_array = []
 coordinates_array = []
 pothole_array_count = []
 df = pd.read_csv("model_input/coord/coord.csv")
 
+def get_traffic_color_given_count(count):
+    """
+    Returns the traffic color given the count.
+    :param count: the count
+    :return: the traffic color
+    """
+    if count <= 3:
+        return "#38c52b"
+    elif count <= 6:
+        return "#fdb435"
+    else:
+        return "#cf4a4a"
 
 def add_pointers(final_df):
     try:
 
         final_df.columns = [c.replace(' ', '') for c in final_df.columns]
+        final_df['id'] = frame_id_array
         final_df['date_time_analyzed'] = pd.to_datetime('now')
         final_df['object_name'] = "Pothole"
         final_df['pothole_count'] = pothole_array_count
 
+        final_df['marker-size'] = "small"
+        final_df['marker-color'] = get_traffic_color_given_count(final_df['pothole_count'])
+        final_df['marker-symbol'] = "roadblock"
+        
     except ValueError:
         logging.error(ValueError)
     finally:
@@ -195,6 +213,8 @@ def run(
                     n = (det[:, -1] == c).sum()  # detections per class   HOW MANY DETECTIONS
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
+
+                    frame_id_array.append(seen)
                     instance = df.iloc[(seen - 1)]
                     coordinates_array.append(instance)  # Get the coordinates from the dataframe
                     result = f"{n}"
