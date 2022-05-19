@@ -72,9 +72,7 @@ def get_traffic_color_given_count(count):
 def iterateThroughEachElementInArrayAndReturnColor(array):
     colors = []
     for item in array:
-        color = get_traffic_color_given_count(int(item))
-        colors.append(color)
-    
+        colors.append(get_traffic_color_given_count(int(item)))
     return colors
     
 def add_pointers(final_df):
@@ -85,12 +83,8 @@ def add_pointers(final_df):
         final_df['date_time_analyzed'] = pd.to_datetime('now')
         final_df['object_name'] = "Pothole"
         final_df['count'] = pothole_array_count
-
         final_df['marker-size'] = "small"
-        final_df['marker-symbol'] = "roadblock"
-        
- 
-        
+        final_df['marker-symbol'] = "roadblock"       
         final_df['marker-color'] = iterateThroughEachElementInArrayAndReturnColor(pothole_array_count)
         
         
@@ -211,12 +205,12 @@ def run(
                 p, im0, frame = path, im0s.copy(), getattr(dataset, 'frame', 0)
 
             p = Path(p)  # to Path
-            save_path = str(save_dir / p.name)  # im.jpg
-            txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # im.txt
-            s += '%gx%g ' % im.shape[2:]  # print string
-            gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-            imc = im0.copy() if save_crop else im0  # for save_crop
-            annotator = Annotator(im0, line_width=line_thickness, example=str(names))
+            # save_path = str(save_dir / p.name)  # im.jpg
+            # txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # im.txt
+            # s += '%gx%g ' % im.shape[2:]  # print string
+            # gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
+            # imc = im0.copy() if save_crop else im0  # for save_crop
+            # annotator = Annotator(im0, line_width=line_thickness, example=str(names))
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
@@ -234,25 +228,25 @@ def run(
                     pothole_array_count.append(result)  # Get the number of potholes from the dataframe
 
                 # Write results
-                for *xyxy, conf, cls in reversed(det):
-                    if save_txt:  # Write to file
-                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
-                        with open(txt_path + '.txt', 'a') as f:
-                            f.write(('%g ' * len(line)).rstrip() % line + '\n')
+            #     for *xyxy, conf, cls in reversed(det):
+            #         if save_txt:  # Write to file
+            #             xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+            #             line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
+            #             with open(txt_path + '.txt', 'a') as f:
+            #                 f.write(('%g ' * len(line)).rstrip() % line + '\n')
 
-                    if save_img or save_crop or view_img:  # Add bbox to image
-                        c = int(cls)  # integer class
-                        label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-                        annotator.box_label(xyxy, label, color=colors(c, True))
-                        if save_crop:
-                            save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+            #         if save_img or save_crop or view_img:  # Add bbox to image
+            #             c = int(cls)  # integer class
+            #             label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
+            #             annotator.box_label(xyxy, label, color=colors(c, True))
+            #             if save_crop:
+            #                 save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
 
-            # Stream results
-            im0 = annotator.result()
-            if view_img:
-                cv2.imshow(str(p), im0)
-                cv2.waitKey(1)  # 1 millisecond
+            # # Stream results
+            # im0 = annotator.result()
+            # if view_img:
+            #     cv2.imshow(str(p), im0)
+            #     cv2.waitKey(1)  # 1 millisecond
 
             # Save results (image with detections)
             # if save_img:
