@@ -75,11 +75,12 @@ def add_pointers(final_df):
         final_df['id'] = frame_id_array
         final_df['date_time_analyzed'] = pd.to_datetime('now')
         final_df['object_name'] = "Pothole"
-        final_df['pothole_count'] = pothole_array_count
+        final_df['count'] = pothole_array_count
 
         final_df['marker-size'] = "small"
-        final_df['marker-color'] = get_traffic_color_given_count(final_df['pothole_count'])
         final_df['marker-symbol'] = "roadblock"
+        final_df['marker-color'] = final_df['color'].apply(get_traffic_color_given_count)
+        
         
     except ValueError:
         logging.error(ValueError)
