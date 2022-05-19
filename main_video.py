@@ -18,6 +18,6 @@ def convert_video_to_frames(video_path, frame_path):
         videoCapture.set(cv2.CAP_PROP_POS_MSEC, second * 1000)
         hasFrames, image = videoCapture.read()
         if hasFrames:
-            cv2.imwrite(os.path.join(frame_path, "frame%d.jpg" % count), image)  # save frame as JPEG file
+            cv2.imwrite(os.path.join(frame_path, "frame0%d.jpg" % count), image)  # save frame as JPEG file
 
         success = hasFrames

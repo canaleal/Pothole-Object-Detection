@@ -68,6 +68,15 @@ def get_traffic_color_given_count(count):
     else:
         return "#cf4a4a"
 
+
+def iterateThroughEachElementInArrayAndReturnColor(array):
+    colors = []
+    for item in array:
+        color = get_traffic_color_given_count(int(item))
+        colors.append(color)
+    
+    return colors
+    
 def add_pointers(final_df):
     try:
 
@@ -79,7 +88,10 @@ def add_pointers(final_df):
 
         final_df['marker-size'] = "small"
         final_df['marker-symbol'] = "roadblock"
-        final_df['marker-color'] = final_df['color'].apply(get_traffic_color_given_count)
+        
+ 
+        
+        final_df['marker-color'] = iterateThroughEachElementInArrayAndReturnColor(pothole_array_count)
         
         
     except ValueError:
