@@ -34,7 +34,7 @@ seaborn>=0.11.0
 # Cython  # for pycocotools https://github.com/cocodataset/cocoapi/issues/172
 # pycocotools>=2.0  # COCO mAP
 # roboflow
-thop~=0.0.31.post2005241907
+thop~=0.1.0.post2206102148
 
 Flask~=2.0.2
 tensorflow~=2.5.0
